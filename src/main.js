@@ -9,11 +9,11 @@ import Vuex from "vuex";
 import store from "./store";
 import mixin from "./mixins/alert-mixins";
 import './services/AxiosInterceptors'
+import '@mdi/font/css/materialdesignicons.css'
 
 Vue.use(VueToast, {
   position: "top-right",
   duration: 3000,
-  queue: true,
 });
 Vue.component(
   "verify-dialog",

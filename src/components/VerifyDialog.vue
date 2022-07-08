@@ -66,6 +66,7 @@ export default {
               this.errorAlert("Địa chỉ email chưa chính xác.");
             } else if (error.response.status === 422) {
               this.successAlert("Địa chỉ email đã được xác thực.");
+              this.$router.push("/login").catch(() => {});
               this.closeDialog();
             } else this.errorAlert("Có lỗi xảy ra. Thử lại.");
           });

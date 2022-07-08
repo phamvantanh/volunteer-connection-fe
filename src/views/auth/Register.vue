@@ -1,188 +1,195 @@
 <template>
-  <v-container class="register-container">
-    <v-card light tag="section">
-      <v-card-title class="justify-center"> ĐĂNG KÝ </v-card-title>
-      <v-tabs fixed-tabs background-color="green" v-model="tab" dark>
-        <v-tab>TÌNH NGUYỆN VIÊN </v-tab>
-        <v-tab>TỔ CHỨC TÌNH NGUYỆN </v-tab>
-        <v-tab-item>
-          <v-card-text>
-            <v-form ref="formVolunteerRegister">
-              <v-row>
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    outlined
-                    label="Email"
-                    v-model="volunteer.email"
-                    :rules="emailRules"
-                    required
-                    dense
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    outlined
-                    label="Tên"
-                    type="text"
-                    v-model="volunteer.name"
-                    :rules="nameRules"
-                    required
-                    dense
-                  ></v-text-field>
-                </v-col>
+  <v-app>
+    <header-page></header-page>
 
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    outlined
-                    label="Ngày tháng năm sinh"
-                    type="date"
-                    v-model="volunteer.dateOfBirth"
-                    :rules="dateRules"
-                    required
-                    dense
-                  ></v-text-field>
-                </v-col>
+    <v-container class="register-container">
+      <v-card light tag="section">
+        <v-card-title class="justify-center"> ĐĂNG KÝ </v-card-title>
+        <v-tabs fixed-tabs background-color="green" dark>
+          <v-tab>TÌNH NGUYỆN VIÊN </v-tab>
+          <v-tab>TỔ CHỨC TÌNH NGUYỆN </v-tab>
+          <v-tab-item>
+            <v-card-text>
+              <v-form ref="formVolunteerRegister">
+                <v-row>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      outlined
+                      label="Email"
+                      v-model="volunteer.email"
+                      :rules="emailRules"
+                      required
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      outlined
+                      label="Tên"
+                      type="text"
+                      v-model="volunteer.name"
+                      :rules="nameRules"
+                      required
+                      dense
+                    ></v-text-field>
+                  </v-col>
 
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    outlined
-                    label="Số điện thoại"
-                    type="text"
-                    v-model="volunteer.phone"
-                    :rules="phoneRules"
-                    required
-                    dense
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    outlined
-                    label="Mật khẩu"
-                    type="password"
-                    v-model="volunteer.password"
-                    :rules="passRules"
-                    required
-                    dense
-                  ></v-text-field>
-                </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      outlined
+                      label="Ngày tháng năm sinh"
+                      type="date"
+                      v-model="volunteer.dateOfBirth"
+                      :rules="dateRules"
+                      required
+                      dense
+                    ></v-text-field>
+                  </v-col>
 
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    outlined
-                    label="Nhập lại mật khẩu"
-                    type="password"
-                    v-model="volunteer.passwordConfirm"
-                    :rules="passConfirmRules"
-                    required
-                    dense
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn block color="success" @click="registerByVolunteer">
-              Đăng ký với vai trò tình nguyện viên
-            </v-btn>
-          </v-card-actions>
-        </v-tab-item>
-        <v-tab-item>
-          <v-card-text>
-            <v-form ref="formOrganizationRegister">
-              <v-row>
-                <v-col cols="12" sm="12">
-                  <v-text-field
-                    outlined
-                    label="Email"
-                    v-model="organization.email"
-                    :rules="emailRules"
-                    required
-                    dense
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="12">
-                  <v-text-field
-                    outlined
-                    label="Tên tổ chức"
-                    type="text"
-                    v-model="organization.name"
-                    :rules="nameRules"
-                    required
-                    dense
-                  ></v-text-field>
-                </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      outlined
+                      label="Số điện thoại"
+                      type="text"
+                      v-model="volunteer.phone"
+                      :rules="phoneRules"
+                      required
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      outlined
+                      label="Mật khẩu"
+                      type="password"
+                      v-model="volunteer.password"
+                      :rules="passRules"
+                      required
+                      dense
+                    ></v-text-field>
+                  </v-col>
 
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    outlined
-                    label="Ngày thành lập"
-                    type="date"
-                    v-model="organization.dateOfBirth"
-                    :rules="dateRules"
-                    required
-                    dense
-                  ></v-text-field>
-                </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      outlined
+                      label="Nhập lại mật khẩu"
+                      type="password"
+                      v-model="volunteer.passwordConfirm"
+                      :rules="passConfirmRules"
+                      required
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn block color="success" @click="registerByVolunteer">
+                Đăng ký với vai trò tình nguyện viên
+              </v-btn>
+            </v-card-actions>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card-text>
+              <v-form ref="formOrganizationRegister">
+                <v-row>
+                  <v-col cols="12" sm="12">
+                    <v-text-field
+                      outlined
+                      label="Email"
+                      v-model="organization.email"
+                      :rules="emailRules"
+                      required
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="12">
+                    <v-text-field
+                      outlined
+                      label="Tên tổ chức"
+                      type="text"
+                      v-model="organization.name"
+                      :rules="nameRules"
+                      required
+                      dense
+                    ></v-text-field>
+                  </v-col>
 
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    outlined
-                    label="Số điện thoại"
-                    type="text"
-                    v-model="organization.phone"
-                    :rules="phoneRules"
-                    dense
-                    required
-                  ></v-text-field>
-                </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      outlined
+                      label="Ngày thành lập"
+                      type="date"
+                      v-model="organization.dateOfBirth"
+                      :rules="dateRules"
+                      required
+                      dense
+                    ></v-text-field>
+                  </v-col>
 
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    outlined
-                    label="Mật khẩu"
-                    type="password"
-                    :rules="passRules"
-                    v-model="organization.password"
-                    required
-                    dense
-                  ></v-text-field>
-                </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      outlined
+                      label="Số điện thoại"
+                      type="text"
+                      v-model="organization.phone"
+                      :rules="phoneRules"
+                      dense
+                      required
+                    ></v-text-field>
+                  </v-col>
 
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    outlined
-                    label="Nhập lại mật khẩu"
-                    type="password"
-                    v-model="organization.passwordConfirm"
-                    :rules="passConfirmRules"
-                    required
-                    dense
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn block color="success" @click="registerByOrganization">
-              Đăng ký với vai trò tổ chức tình nguyện</v-btn
-            >
-          </v-card-actions>
-        </v-tab-item>
-      </v-tabs>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      outlined
+                      label="Mật khẩu"
+                      type="password"
+                      :rules="passRules"
+                      v-model="organization.password"
+                      required
+                      dense
+                    ></v-text-field>
+                  </v-col>
 
-      <v-divider></v-divider>
-      <div class="divider">
-        Bạn đã có tài khoản? <router-link to="/">Đăng nhập</router-link>
-      </div>
-    </v-card>
-  </v-container>
+                  <v-col cols="12" sm="6">
+                    <v-text-field
+                      outlined
+                      label="Nhập lại mật khẩu"
+                      type="password"
+                      v-model="organization.passwordConfirm"
+                      :rules="passConfirmRules"
+                      required
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn block color="success" @click="registerByOrganization">
+                Đăng ký với vai trò tổ chức tình nguyện</v-btn
+              >
+            </v-card-actions>
+          </v-tab-item>
+        </v-tabs>
+
+        <v-divider></v-divider>
+        <div class="divider text-center">
+          Bạn đã có tài khoản? <router-link to="/login">Đăng nhập</router-link>
+        </div>
+      </v-card>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
 import AuthApis from "../../factories/auth";
+import HeaderPage from "../volunteer/Header.vue";
+import _ from "lodash";
 
 export default {
   name: "RegisterPage",
+  components: { HeaderPage },
   data() {
     return {
       volunteer: {
@@ -201,27 +208,29 @@ export default {
         password: null,
         passwordConfirm: null,
       },
-      emailRules: [
-        (v) => !!v || "Email is required",
-        (v) => /.+@.+/.test(v) || "E-mail must be valid",
-      ],
-      nameRules: [
-        (v) => !!v || "Name is required",
-        (v) =>
-          !this.startsWithoutSpace(v, " ") || "Không chứa kí tự trống đầu tiên",
-      ],
-      dateRules: [(v) => !!v || "Date is required"],
-      phoneRules: [
-        (v) => !!v || "Phone is required",
-        (v) => this.size(v) >= 10 || "Phone must be more than 10 characters",
-      ],
-      passRules: [
-        (v) => !!v || "Password is required",
-        (v) => this.size(v) >= 6 || "Password must be more than 6 characters",
-      ],
       passConfirmRules: [
         (v) => !!v || "Password is required",
         (v) => v == this.volunteer.password || "Mật khẩu không giống nhau",
+      ],
+      emailRules: [
+        (v) => !!v || "Hãy nhập mục này *",
+        (v) => /.+@.+/.test(v) || "Email không hợp lệ",
+      ],
+      nameRules: [
+        (v) => !!v || "Hãy nhập mục này *",
+        (v) => !_.startsWith(v, " ") || "Không chứa kí tự trống đầu tiên",
+      ],
+      dateRules: [(v) => !!v || "Hãy nhập mục này *"],
+      phoneRules: [
+        (v) => !!v || "Hãy nhập mục này *",
+        (v) => _.size(v) == 10 || "Số điện thoại phải là 10 số",
+        (v) =>
+          /(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/.test(v) ||
+          "Số điện thoại không hợp lệ",
+      ],
+      passRules: [
+        (v) => !!v || "Hãy nhập mục này *",
+        (v) => _.size(v) >= 6 || "Mật khẩu phải lớn hơn hoặc bằng 6 kí tự",
       ],
     };
   },
@@ -249,14 +258,15 @@ export default {
         console.log(volunteerInfo);
         AuthApis.registerUser(volunteerInfo)
           .then(() => {
-            this.successAlert("Register Success!!!");
+            this.successAlert("Đăng ký thành công! Hãy xác nhận email");
+            this.$router.push({ path: "/" });
           })
           .catch((error) => {
             const errorList = Object.values(error.response.data.message).join(
               ""
             );
             console.log(errorList);
-            this.errorAlert("Register fails! Try again ");
+            this.errorAlert("Đăng ký thất bại, Thử lại sau");
           });
       }
     },
@@ -275,14 +285,15 @@ export default {
         console.log(organizationInfo);
         AuthApis.registerUser(organizationInfo)
           .then(() => {
-            this.successAlert("Register Success!!!");
+            this.successAlert("Đăng ký thành công, hãy xác thực email");
+            this.$router.push({ path: "/" });
           })
           .catch((error) => {
             const errorList = Object.values(error.response.data.message).join(
               ""
             );
             console.log(errorList);
-            this.errorAlert("Register fails! Try again ");
+            this.errorAlert("Đã xảy ra lỗi ");
           });
       }
     },

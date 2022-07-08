@@ -6,20 +6,27 @@
       <router-view></router-view>
     </div>
     <!-- </v-main> -->
+    <loading-overlay :loading-overlay-visible="loadingOverlayVisible" />
   </v-app>
 </template>
 
 <script>
 import CookiesService from "./services/cookies.service";
 const cookiesService = CookiesService.getService();
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import AuthApis from "./factories/auth";
+const LoadingOverlay = () => import("./components/LoadingOverlay");
 
 export default {
   name: "App",
-  components: {},
+  components: { LoadingOverlay },
   methods: {
     ...mapActions(["getUserProfile"]),
+  },
+  computed: {
+    ...mapGetters({
+      loadingOverlayVisible: "loadingOverlayVisible",
+    }),
   },
 
   beforeMount() {
@@ -30,11 +37,10 @@ export default {
           this.getUserProfile(response.data.user);
         })
         .catch(() => {
-          this.$router.push("/login").catch(() => {});
+          localStorage.removeItem("user");
         });
     } else {
       localStorage.removeItem("user");
-      this.$router.push("/login").catch(() => {});
     }
   },
 };
@@ -42,10 +48,10 @@ export default {
 
 <style>
 #app {
-  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  /* text-align: center; */
   color: #2c3e50;
   width: 100%;
   height: 100vh;

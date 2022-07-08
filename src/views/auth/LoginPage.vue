@@ -1,67 +1,78 @@
 <template>
-  <div class="bg">
-    <v-container class="login-container">
-      <v-card elevation="6" light tag="section">
-        <v-card-title class="justify-center"> ĐĂNG NHẬP </v-card-title>
-        <v-card-text>
-          <v-form ref="form">
-            <v-text-field
-              outlined
-              label="Email"
-              :rules="emailRules"
-              v-model="user.email"
-              required
-            ></v-text-field>
-            <v-text-field
-              outlined
-              label="Mật khẩu"
-              type="password"
-              :rules="passRules"
-              v-model="user.password"
-              required
-            ></v-text-field>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn block color="success" @click="submit"> Đăng nhập </v-btn>
-        </v-card-actions>
-        <v-divider></v-divider>
-        <div class="divider">
-          Bạn chưa có tài khoản?
-          <router-link to="/register">Đăng ký</router-link>
+  <v-app>
+    <v-content>
+      <header-page></header-page>
+      <div class="bg">
+        <v-container class="login-container">
+          <v-card elevation="6" light tag="section">
+            <v-card-title class="justify-center"> ĐĂNG NHẬP </v-card-title>
+            <v-card-text>
+              <v-form ref="form">
+                <v-text-field
+                  outlined
+                  label="Email"
+                  :rules="emailRules"
+                  v-model="user.email"
+                  required
+                ></v-text-field>
+                <v-text-field
+                  outlined
+                  label="Mật khẩu"
+                  type="password"
+                  :rules="passRules"
+                  v-model="user.password"
+                  required
+                ></v-text-field>
+              </v-form>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn block color="success" @click="submit"> Đăng nhập </v-btn>
+            </v-card-actions>
+            <v-divider></v-divider>
+            <div class="divider text-center">
+              Bạn chưa có tài khoản?
+              <router-link to="/register">Đăng ký</router-link>
+            </div>
+            <div class="text-center">Quên mật khẩu?</div>
+          </v-card>
+        </v-container>
+        <div class="text-center">
+          <v-dialog
+            :value="notVerifyDialog"
+            @click:outside="notVerifyDialog = false"
+            width="500"
+          >
+            <v-card>
+              <v-card-title class="text-h8 lighten-2">
+                TÀI KHOẢN CHƯA XÁC THỰC
+              </v-card-title>
+              <v-card-text>
+                Tài khoản của bạn chưa được xác thực. Vui lòng kiểm tra email để
+                xác thực hoặc yêu cầu có thể yêu cầu gửi lại đường dẫn xác thực.
+                <v-btn block color="success" @click="verifyVisible = true">
+                  GỬI LẠI ĐƯỜNG DẪN XÁC THỰC</v-btn
+                >
+              </v-card-text>
+            </v-card>
+          </v-dialog>
         </div>
-        <div>Quên mật khẩu?</div>
-      </v-card>
-    </v-container>
-    <div class="text-center">
-      <v-dialog
-        :value="notVerifyDialog"
-        @click:outside="notVerifyDialog = false"
-        width="500"
-      >
-        <v-card>
-          <v-card-title class="text-h8 lighten-2">
-            TÀI KHOẢN CHƯA XÁC THỰC
-          </v-card-title>
-          <v-card-text>
-            Tài khoản của bạn chưa được xác thực. Vui lòng kiểm tra email để xác
-            thực hoặc yêu cầu có thể yêu cầu gửi lại đường dẫn xác thực.
-            <v-btn block color="success" @click="verifyVisible = true">
-              GỬI LẠI ĐƯỜNG DẪN XÁC THỰC</v-btn
-            >
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-    </div>
-    <verify-dialog :visible.sync="verifyVisible"></verify-dialog>
-  </div>
+        <verify-dialog :visible.sync="verifyVisible"></verify-dialog>
+      </div>
+    </v-content>
+    <!-- <footer-page></footer-page> -->
+  </v-app>
 </template>
 
 <script>
-import CookiesService from "@/services/cookies.service";
+import { mapGetters } from "vuex";
+
+// import CookiesService from "@/services/cookies.service";
 import { mapActions } from "vuex";
+import HeaderPage from "../volunteer/Header.vue";
+// import FooterPage from "../volunteer/Footer.vue";
 
 export default {
+  components: { HeaderPage },
   data() {
     return {
       notVerifyDialog: false,
@@ -71,21 +82,24 @@ export default {
         password: null,
       },
       emailRules: [
-        (v) => !!v || "E-mail is required",
-        (v) => /.+@.+/.test(v) || "E-mail must be valid",
+        (v) => !!v || "Bạn phải nhập trường này*",
+        (v) => /.+@.+/.test(v) || "Email không đúng định dạng",
       ],
       passRules: [
-        (v) => !!v || "Password is required",
-        (v) => v.length >= 6 || "Password must be more than 6 characters",
+        (v) => !!v || "Bạn phải nhập trường này*",
+        (v) =>
+          this.sizeItem(v) >= 6 || "Mật khẩu phải lớn hơn 6 kí tự",
       ],
     };
   },
 
   created() {
-    const token = CookiesService.getToken;
-    if (token) {
+    if (localStorage.getItem("user")) {
       this.$router.push("/");
     }
+  },
+  computed: {
+    ...mapGetters({ User: "StateUser" }),
   },
 
   methods: {
@@ -151,7 +165,7 @@ h1 {
 
 .bg {
   background-image: url("../../assets/welcome.jpg");
-  height: 100%;
+  height: 90%;
   width: 80%;
   margin-left: -5%;
   background-position: center;

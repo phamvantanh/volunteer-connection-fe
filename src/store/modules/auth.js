@@ -14,7 +14,7 @@ const getters = {
 };
 
 const actions = {
-  async logIn ({ commit }, User) {
+  async logIn({ commit }, User) {
     await axios.post(AuthApis.LOGIN, User)
       .then(response => {
         cookiesService.setToken(response.data.access_token);
@@ -29,7 +29,7 @@ const actions = {
 
   },
 
-  async logOut ({ commit }, header) {
+  async logOut({ commit }, header) {
     localStorage.removeItem('user')
     var refresh_token = {
       'refresh_token': cookiesService.getRefreshToken()
@@ -44,13 +44,18 @@ const actions = {
     commit('setUser', null);
   },
 
-  getUserProfile ({ commit }, user) {
+  getUserProfile({ commit }, user) {
     commit('setUser', user);
+    var userInfo = {
+      'email': user.email,
+      'name': user.name,
+    }
+    localStorage.setItem('user', JSON.stringify(userInfo))
   }
 
 };
 const mutations = {
-  setUser (state, user) {
+  setUser(state, user) {
     state.user = user
   },
 
