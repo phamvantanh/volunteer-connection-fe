@@ -1,5 +1,5 @@
   <template>
-  <div>
+  <div class="mt-5">
     <v-card v-if="showPage" class="mx-auto" max-width="80%">
       <v-row class="ma-0">
         <v-col cols="12" sm="3">
@@ -23,7 +23,9 @@
               <v-btn color="primary" @click="editProfile()"
                 >Chỉnh sửa trang thông tin</v-btn
               >
-              <v-btn color="green">Đổi mật khẩu</v-btn>
+              <v-btn class="ml-4" color="green" @click="openChangePassDialog()"
+                >Đổi mật khẩu</v-btn
+              >
             </div>
           </v-row>
           <v-row class="pa-5 mt-0 pt-0">
@@ -76,6 +78,16 @@
           <v-card-text>
             <v-container>
               <v-row>
+                <v-col cols="12" sm="6" md="12">
+                  <v-file-input
+                    accept="image/png, image/jpeg, image/bmp"
+                    placeholder="Pick an avatar"
+                    prepend-icon="mdi-camera"
+                    label="Avatar"
+                    v-model="editedItem.avatar_url"
+                    @change="upload()"
+                  ></v-file-input>
+                </v-col>
                 <v-col cols="12" sm="6" md="12">
                   <v-text-field
                     v-model="editedItem.name"
@@ -144,64 +156,75 @@
         </v-card>
       </v-form>
     </v-dialog>
+    <v-dialog
+      :value="dialogChangePass"
+      max-width="400px"
+      @keydown.esc="dialogChangePass = false"
+      @click:outside="dialogChangePass = false"
+    >
+      <v-form ref="formChangePass">
+        <v-card>
+          <v-card-title>
+            <span class="text-h5">Đổi mật khẩu</span>
+          </v-card-title>
+
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12" sm="12" md="12">
+                  <v-text-field
+                    v-model="editedChangePassItem.old_password"
+                    :rules="RuleList.password"
+                    maxlength="64"
+                    type="password"
+                    label="Nhập mật khẩu cũ"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="12" md="12">
+                  <v-text-field
+                    v-model="editedChangePassItem.new_password"
+                    :rules="RuleList.password"
+                    label="Nhập mật khẩu mới"
+                    type="password"
+                    maxlength="64"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="12" md="12">
+                  <v-text-field
+                    v-model="editedChangePassItem.new_confirm_password"
+                    :rules="passConfirmRules"
+                    label="Nhập lại mật khẩu mới"
+                    type="password"
+                    maxlength="64"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="closeChangePass">
+              Hủy
+            </v-btn>
+            <v-btn color="blue darken-1" text @click="saveChangePass">
+              Lưu
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
+    </v-dialog>
     <v-card class="mx-auto mt-5" max-width="80%">
       <template v-if="user.role === 'volunteer'">
         <v-tabs fixed-tabs background-color="primary">
           <v-tab> Chứng chỉ tình nguyện </v-tab>
-          <v-tab> Sự kiện của tôi </v-tab>
+          <v-tab> Sự kiện </v-tab>
           <v-tab-item>
-            <v-card>
-              <v-card-title
-                >Chứng chỉ tình nguyện mùa hè xanh 2021</v-card-title
-              >
-              <v-card-subtitle>Ngày cấp: 12/09/2021</v-card-subtitle>
-              <v-btn>Xem chứng chỉ</v-btn>
-            </v-card>
-            <v-card>
-              <v-card-title>Chứng chỉ Hiến máu nhân đạo</v-card-title>
-              <v-card-subtitle>Ngày cấp: 23/05/2022</v-card-subtitle>
-              <v-btn>Xem chứng chỉ</v-btn>
-            </v-card>
+            <my-certificate :id="user.id"></my-certificate>
           </v-tab-item>
 
           <v-tab-item>
-            <v-card class="mt-5" max-width="344">
-              <v-img
-                src="https://image.thanhnien.vn/w660/Uploaded/2022/slaohuo/2020_07_09/muahexanh_lethanh9_vuyb.jpg"
-                height="200px"
-              ></v-img>
-
-              <v-card-title>
-                ĐĂNG KÝ THAM GIA TÌNH NGUYỆN VIÊN HÈ
-              </v-card-title>
-
-              <v-card-actions>
-                <v-btn color="orange lighten-2" text> Explore </v-btn>
-
-                <v-spacer></v-spacer>
-
-                <v-btn icon @click="show = !show">
-                  <v-icon>{{
-                    show ? "mdi-chevron-up" : "mdi-chevron-down"
-                  }}</v-icon>
-                </v-btn>
-              </v-card-actions>
-
-              <v-expand-transition>
-                <div v-show="show">
-                  <v-divider></v-divider>
-
-                  <v-card-text>
-                    I'm a thing. But, like most politicians, he promised more
-                    than he could deliver. You won't have time for sleeping,
-                    soldier, not with all the bed making you'll be doing. Then
-                    we'll go with that data file! Hey, you add a one and two
-                    zeros to that or we walk! You're going to do his laundry?
-                    I've got to find a way to escape.
-                  </v-card-text>
-                </div>
-              </v-expand-transition>
-            </v-card>
+            <registered-event :id="user.id"></registered-event>
           </v-tab-item>
         </v-tabs>
       </template>
@@ -210,80 +233,10 @@
           <v-tab> Bài viết </v-tab>
           <v-tab> Sự kiện </v-tab>
           <v-tab-item>
-            <v-card class="mt-5" max-width="344">
-              <v-img
-                src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                height="200px"
-              ></v-img>
-
-              <v-card-title> TÌNH NGUYỆN VIỆT NAM </v-card-title>
-
-              <v-card-actions>
-                <v-btn color="orange lighten-2" text> Explore </v-btn>
-
-                <v-spacer></v-spacer>
-
-                <v-btn icon @click="show = !show">
-                  <v-icon>{{
-                    show ? "mdi-chevron-up" : "mdi-chevron-down"
-                  }}</v-icon>
-                </v-btn>
-              </v-card-actions>
-
-              <v-expand-transition>
-                <div v-show="show">
-                  <v-divider></v-divider>
-
-                  <v-card-text>
-                    I'm a thing. But, like most politicians, he promised more
-                    than he could deliver. You won't have time for sleeping,
-                    soldier, not with all the bed making you'll be doing. Then
-                    we'll go with that data file! Hey, you add a one and two
-                    zeros to that or we walk! You're going to do his laundry?
-                    I've got to find a way to escape.
-                  </v-card-text>
-                </div>
-              </v-expand-transition>
-            </v-card>
+            <my-post :id="user.id"></my-post>
           </v-tab-item>
           <v-tab-item>
-            <v-card class="mt-5" max-width="344">
-              <v-img
-                src="https://image.thanhnien.vn/w660/Uploaded/2022/slaohuo/2020_07_09/muahexanh_lethanh9_vuyb.jpg"
-                height="200px"
-              ></v-img>
-
-              <v-card-title>
-                ĐĂNG KÝ THAM GIA TÌNH NGUYỆN VIÊN HÈ
-              </v-card-title>
-
-              <v-card-actions>
-                <v-btn color="orange lighten-2" text> Explore </v-btn>
-
-                <v-spacer></v-spacer>
-
-                <v-btn icon @click="show = !show">
-                  <v-icon>{{
-                    show ? "mdi-chevron-up" : "mdi-chevron-down"
-                  }}</v-icon>
-                </v-btn>
-              </v-card-actions>
-
-              <v-expand-transition>
-                <div v-show="show">
-                  <v-divider></v-divider>
-
-                  <v-card-text>
-                    I'm a thing. But, like most politicians, he promised more
-                    than he could deliver. You won't have time for sleeping,
-                    soldier, not with all the bed making you'll be doing. Then
-                    we'll go with that data file! Hey, you add a one and two
-                    zeros to that or we walk! You're going to do his laundry?
-                    I've got to find a way to escape.
-                  </v-card-text>
-                </div>
-              </v-expand-transition>
-            </v-card>
+            <my-event :id="user.id"></my-event>
           </v-tab-item>
         </v-tabs>
       </template>
@@ -298,9 +251,16 @@ import rules from "../../mixins/rules";
 
 import UserApis from "../../factories/user";
 import AdminApis from "@/factories/admin";
+import MyEvent from "@/components/MyEvent.vue";
+import MyPost from "@/components/MyPost.vue";
+import RegisteredEvent from "@/components/RegisteredEvent.vue";
+import MyCertificate from "@/components/MyCertificate.vue";
+import axios from "axios";
 export default {
+  components: { MyEvent, MyPost, RegisteredEvent, MyCertificate },
   data: () => ({
     dialog: false,
+    dialogChangePass: false,
     genderItems: [
       { gender_vietnamese: "Nam", gender_english: "male" },
       { gender_vietnamese: "Nữ", gender_english: "female" },
@@ -311,6 +271,7 @@ export default {
     showPage: false,
     user: {},
     show: false,
+    imageUpload: null,
     editedItem: {
       id: "",
       name: "",
@@ -322,6 +283,11 @@ export default {
       avatar_url: null,
       about: null,
     },
+    editedChangePassItem: {
+      old_password: null,
+      new_password: null,
+      new_confirm_password: null,
+    },
   }),
   created() {
     this.getUserProfileByUrl(this.$route.params.url);
@@ -331,8 +297,32 @@ export default {
     nowDate() {
       return new Date().toJSON().slice(0, 10).replace(/-/g, "-");
     },
+    passConfirmRules() {
+      return [
+        (v) => !!v || "Hãy nhập mục này *",
+        (v) =>
+          v == this.editedChangePassItem.new_password ||
+          "Mật khẩu không giống nhau",
+      ];
+    },
   },
   methods: {
+    upload() {
+      this.showLoadingOverlay();
+      const formData = new FormData();
+      formData.append("image", this.editedItem.avatar_url),
+        axios
+          .post("http://127.0.0.1:8000/api/upload", formData)
+          .then((response) => {
+            this.successAlert("Tải ảnh thành công");
+            this.imageUpload = response.data.link;
+          })
+          .catch((error) => {
+            this.errorAlert("Tải ảnh thất bại! thử lại");
+            console.log(error);
+          });
+      this.hideLoadingOverlay();
+    },
     getUserProfileByUrl(url) {
       this.showLoadingOverlay();
       UserApis.getUserProfile(url)
@@ -344,15 +334,22 @@ export default {
       this.hideLoadingOverlay();
     },
     editProfile() {
-      this.editedItem = this.user;
+      this.editedItem = this.cloneDeep(this.user);
+      this.editedItem.imageBefore = this.editedItem.avatar_url;
       this.dialog = true;
     },
-
+    openChangePassDialog() {
+      this.dialogChangePass = true;
+      this.$refs.formChangePass.reset();
+    },
     close() {
       this.dialog = false;
     },
     validateForm() {
       return this.$refs.formEdit.validate();
+    },
+    validateFormChangePass() {
+      return this.$refs.formChangePass.validate();
     },
 
     save() {
@@ -360,13 +357,41 @@ export default {
         this.updateUserInfo();
       } else return;
     },
+    closeChangePass() {
+      this.dialogChangePass = false;
+    },
+    saveChangePass() {
+      if (this.validateFormChangePass()) {
+        this.changePass();
+      } else return;
+    },
+    changePass() {
+      UserApis.changePass(this.editedChangePassItem)
+        .then(() => {
+          this.successAlert("Cập nhật thành công");
+          this.closeChangePass();
+        })
+        .catch((error) => {
+          if (error.response.status === 422) {
+            this.errorAlert("Kiểm tra các thông tin đã nhập");
+          } else if (error.response.data.message === "Sai mật khẩu") {
+            this.errorAlert("Mật khẩu cũ không chính xác");
+          } else {
+            this.errorAlert("Đã xảy ra lỗi. Thử lại sau!");
+          }
+        });
+    },
 
     updateUserInfo() {
       this.showLoadingOverlay();
+      this.editedItem.avatar_url = this.imageUpload
+        ? this.imageUpload
+        : this.editedItem.imageBefore;
       AdminApis.updateUser(this.editedItem)
         .then(() => {
           this.successAlert("Cập nhật thành công");
-          this.close();
+          this.$router.go();
+          // this.close();
         })
         .catch((error) => {
           if (error.response.status === 422) {

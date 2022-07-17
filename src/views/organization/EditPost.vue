@@ -8,6 +8,7 @@
         placeholder="Tải lên ảnh minh họa của bài viết"
         prepend-icon="mdi-camera"
         label="Ảnh minh họa"
+        @change="upload()"
       ></v-file-input>
       <v-text-field
         :rules="titleRule"
@@ -17,7 +18,13 @@
         label="Nhập tiêu đề bài viết"
         outlined
       ></v-text-field>
-      <vue-editor style="min-height: 370px" v-model="content"></vue-editor>
+      <vue-editor
+        style="min-height: 370px"
+        v-model="content"
+        use-custom-image-handler
+        @image-added="handleImageAdded"
+        :editorOptions="editorSettings"
+      ></vue-editor>
       <v-row class="mt-5">
         <v-spacer></v-spacer>
         <v-btn color="primary" class="white--text mr-5" @click="cancel()"
@@ -35,7 +42,10 @@
 
 <script>
 import PostApis from "@/factories/post";
-import { VueEditor } from "vue2-editor";
+import { VueEditor, Quill } from "vue2-editor";
+import axios from "axios";
+import ImageResize from "quill-image-resize-vue";
+Quill.register("modules/imageResize", ImageResize);
 
 export default {
   components: {
@@ -46,10 +56,17 @@ export default {
     return {
       id: null,
       content: "",
-      post_thumbnail: "",
+      imageUpload: null,
+      post_thumbnail: null,
+      post_thumbnailBefore: null,
       title: "",
       slug: "",
       titleRule: [(v) => !!v || "Hãy nhập mục này *"],
+      editorSettings: {
+        modules: {
+          imageResize: {},
+        },
+      },
     };
   },
   created() {
@@ -57,6 +74,37 @@ export default {
   },
 
   methods: {
+    handleImageAdded: function (file, Editor, cursorLocation, resetUploader) {
+      var formData = new FormData();
+      formData.append("image", file);
+      this.showLoadingOverlay();
+      axios
+        .post("http://127.0.0.1:8000/api/upload", formData)
+        .then((response) => {
+          this.successAlert("Tải ảnh thành công");
+          let url = response.data.link;
+          Editor.insertEmbed(cursorLocation, "image", url);
+          resetUploader();
+        })
+        .catch(() => {
+          this.errorAlert("Tải ảnh thất bại! thử lại");
+        });
+      this.hideLoadingOverlay();
+    },
+    upload() {
+      const formData = new FormData();
+      formData.append("image", this.post_thumbnail),
+        axios
+          .post("http://127.0.0.1:8000/api/upload", formData)
+          .then((response) => {
+            this.successAlert("Tải ảnh thành công");
+            this.imageUpload = response.data.link;
+          })
+          .catch((error) => {
+            this.errorAlert("Tải ảnh thất bại! thử lại");
+            console.log(error);
+          });
+    },
     getPostDetail(slug) {
       this.showLoadingOverlay();
       PostApis.getPostDetail(slug)
@@ -65,6 +113,7 @@ export default {
           this.content = value.content;
           this.title = value.title;
           this.post_thumbnail = value.post_thumbnail;
+          this.post_thumbnailBefore = value.post_thumbnail;
           this.slug = value.slug;
         })
         .catch(() => {});
@@ -83,9 +132,10 @@ export default {
         const post = {
           id: this.id,
           title: this.title,
-          post_thumbnail: this.post_thumbnail,
-          // "https://images.hcmcpv.org.vn/res/news/2021/10/04-10-2021-nhung-tinh-nguyen-vien-gop-suc-vao-cuoc-chien-chong-covid19-tai-quan-binh-tan-641656A9-details.jpg?vs=04102021100359",
           content: this.content,
+          post_thumbnail: this.imageUpload
+            ? this.imageUpload
+            : this.post_thumbnailBefore,
         };
         PostApis.editPost(post)
           .then((value) => {

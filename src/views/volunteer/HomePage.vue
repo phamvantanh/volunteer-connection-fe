@@ -1,7 +1,7 @@
 <template>
   <div>
     <header-page></header-page>
-    <v-main class="mt-5 mb-5" style="min-height: 600px">
+    <v-main class=" mb-5" style="min-height: 625px">
       <router-view></router-view>
     </v-main>
 

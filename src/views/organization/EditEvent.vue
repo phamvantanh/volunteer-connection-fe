@@ -8,6 +8,7 @@
         placeholder="Tải lên ảnh minh họa của sự kiện"
         prepend-icon="mdi-camera"
         label="Ảnh minh họa"
+        @change="upload()"
       ></v-file-input>
       <v-text-field
         :rules="titleRule"
@@ -59,6 +60,9 @@
       <vue-editor
         style="min-height: 370px"
         v-model="event.content"
+        use-custom-image-handler
+        @image-added="handleImageAdded"
+        :editorOptions="editorSettings"
       ></vue-editor>
       <v-btn
         color="green"
@@ -73,9 +77,11 @@
 
 
 <script>
-import { VueEditor } from "vue2-editor";
+import { VueEditor, Quill } from "vue2-editor";
 import EventApis from "@/factories/event";
-
+import axios from "axios";
+import ImageResize from "quill-image-resize-vue";
+Quill.register("modules/imageResize", ImageResize);
 export default {
   components: {
     VueEditor,
@@ -85,6 +91,12 @@ export default {
     return {
       titleRule: [(v) => !!v || "Hãy nhập mục này *"],
       statusRule: [(v) => v !== null || "Hãy nhập mục này *"],
+      imageUpload: null,
+      editorSettings: {
+        modules: {
+          imageResize: {},
+        },
+      },
       event: {
         id: null,
         title: null,
@@ -120,12 +132,43 @@ export default {
     this.getEventDetail(this.$route.params.slug);
   },
   methods: {
+    handleImageAdded: function (file, Editor, cursorLocation, resetUploader) {
+      var formData = new FormData();
+      formData.append("image", file);
+      axios
+        .post("http://127.0.0.1:8000/api/upload", formData)
+        .then((response) => {
+          this.successAlert("Tải ảnh thành công");
+          let url = response.data.link;
+          Editor.insertEmbed(cursorLocation, "image", url);
+          resetUploader();
+        })
+        .catch(() => {
+          this.errorAlert("Tải ảnh thất bại! thử lại");
+        });
+    },
+
+    upload() {
+      const formData = new FormData();
+      formData.append("image", this.event.event_thumbnail),
+        axios
+          .post("http://127.0.0.1:8000/api/upload", formData)
+          .then((response) => {
+            this.successAlert("Tải ảnh thành công");
+            this.imageUpload = response.data.link;
+          })
+          .catch((error) => {
+            this.errorAlert("Tải ảnh thất bại! thử lại");
+            console.log(error);
+          });
+    },
     getEventDetail(slug) {
       this.showLoadingOverlay();
       EventApis.getEventDetail(slug)
         .then((value) => {
           this.event = value;
           this.event.deadline = value.deadline.slice(0, 10);
+          this.event.event_thumbnailBefore = this.event.event_thumbnail;
         })
         .catch(() => {});
       this.hideLoadingOverlay();
@@ -141,8 +184,10 @@ export default {
         console.log(this.event.content);
         this.errorAlert("Nhập nội dung sự kiện.");
       } else {
-        // this.event.event_thumbnail =
-        //   "https://blog.topcv.vn/wp-content/uploads/2019/02/nhan-vien-to-chuc-su-kien.jpg";
+        this.event.event_thumbnail = this.imageUpload
+          ? this.imageUpload
+          : this.event.event_thumbnailBefore;
+
         EventApis.editEvent(this.event)
           .then((value) => {
             this.successAlert("Chỉnh sửa sự kiện thành công");

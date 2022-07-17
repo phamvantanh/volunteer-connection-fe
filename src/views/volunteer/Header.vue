@@ -1,5 +1,10 @@
 <template>
-  <v-toolbar color="green" fixed>
+  <v-toolbar
+    :style="
+      !show ? 'background-color:#4caf50' : 'background-color: transparent'
+    "
+    fixed
+  >
     <v-toolbar-title
       class="white--text text-h6"
       style="cursor: pointer"
@@ -84,6 +89,9 @@ export default {
   data() {
     return {};
   },
+  props: {
+    show: Boolean,
+  },
   computed: {
     ...mapGetters({ User: "StateUser" }),
   },
@@ -108,7 +116,7 @@ export default {
       this.$router.push({ path: "/admin" });
     },
     homepage() {
-      this.$router.push({ path: "/" });
+      this.$router.push({ path: "/" }).catch(() => {});
     },
     goToProfile() {
       this.$router.push({ path: "/user/" + this.User.url_account });
@@ -126,4 +134,11 @@ export default {
   },
 };
 </script>
-
+<style scoped>
+.color-header {
+  color: green;
+}
+.no-color {
+  background-color: transparent;
+}
+</style>

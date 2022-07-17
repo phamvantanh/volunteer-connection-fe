@@ -25,6 +25,8 @@ import EditPost from '@/views/organization/EditPost.vue'
 import EditEvent from '@/views/organization/EditEvent.vue'
 import RegisteredVolunteer from '@/views/organization/RegisteredVolunteer.vue'
 
+import TestUpload from '../views/volunteer/TestUpload.vue'
+
 Vue.use(VueRouter)
 export const router = new VueRouter({
   mode: 'history',
@@ -86,6 +88,12 @@ export const router = new VueRouter({
         path: 'events/search',
         name: "EventSearch",
         component: EventSearch
+      },
+
+      {
+        path: 'test',
+        name: "TestUpload",
+        component: TestUpload
       },
       ]
     },

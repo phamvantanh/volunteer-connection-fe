@@ -1,5 +1,5 @@
   <template>
-  <v-card v-if="showPage" class="mx-auto" max-width="80%" min-height="600px">
+  <v-card v-if="showPage" class="mx-auto mt-5" max-width="80%" min-height="600px">
     <div class="d-flex justify-end" v-if="User">
       <v-btn
         icon

@@ -1,5 +1,10 @@
   <template>
-  <v-card v-if="showPage" class="mx-auto" max-width="80%" min-height="600px">
+  <v-card
+    v-if="showPage"
+    class="mx-auto mt-5"
+    max-width="80%"
+    min-height="600px"
+  >
     <v-card-title class="text-start text-wrap" style="text-transform: none">{{
       event.title
     }}</v-card-title>
@@ -75,6 +80,14 @@
       >
         Trạng thái: {{ event.status ? "Mở" : "Đóng" }}
       </v-chip>
+      <v-chip
+        class="ma-2"
+        :color="event.is_published ? 'green' : 'close'"
+        text-color="white"
+        v-if="User && User.id === event.user_id"
+      >
+        Hiển thị: {{ event.is_published ? "Công khai" : "Chỉ mình tôi" }}
+      </v-chip>
     </v-row>
     <v-divider></v-divider>
     <div
@@ -97,11 +110,24 @@
         v-if="User && checkRegister()"
         color="red"
         class="white--text"
+        :disabled="checkRegistered()"
         @click="cancelRegisterEvent()"
         >HỦY ĐĂNG KÝ
       </v-btn>
       <v-spacer></v-spacer>
     </v-card-actions>
+    <v-divider></v-divider>
+    <v-tabs fixed-tabs background-color="green">
+      <v-tab class="white--text"> Bình luận</v-tab>
+      <v-tab class="white--text"> Đánh giá </v-tab>
+      <v-tab-item>
+        <comment :id="event.id" :organzation_id="event.user_id"></comment>
+      </v-tab-item>
+
+      <v-tab-item>
+        <review :id="event.id" :register_list="event.register_list"></review>
+      </v-tab-item>
+    </v-tabs>
   </v-card>
 </template>
 
@@ -109,7 +135,10 @@
 import AdminApis from "@/factories/admin";
 import { mapGetters } from "vuex";
 import EventApis from "../../factories/event";
+import Comment from "@/components/Comment.vue";
+import Review from "@/components/Review.vue";
 export default {
+  components: { Comment, Review },
   data: () => ({
     event: {},
     showPage: false,
@@ -132,6 +161,16 @@ export default {
       if (
         this.event.register_list.find(({ user_id }) => user_id === this.User.id)
       ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    checkRegistered() {
+      const $result = this.event.register_list.find(
+        ({ user_id }) => user_id === this.User.id
+      );
+      if ($result && $result.is_confirmed === 1) {
         return true;
       } else {
         return false;

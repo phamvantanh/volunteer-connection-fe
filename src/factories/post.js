@@ -10,6 +10,9 @@ const PostApis = {
 
     REPORT_POST: `${baseUrl}/reports`,
 
+    GET_POST_PROFILE: `${baseUrl}/user`,
+
+
     getPostDetail(slug) {
         return new Promise((resolve, reject) => {
             axios.get(this.GET_POST_BY_SLUG + `/${slug}`)
@@ -36,7 +39,7 @@ const PostApis = {
 
     editPost(post) {
         return new Promise((resolve, reject) => {
-            axios.put(this.ADD_POST+ `/${post.id}`, post)
+            axios.put(this.ADD_POST + `/${post.id}`, post)
                 .then((value) => {
                     resolve(value.data.post);
                 })
@@ -67,7 +70,19 @@ const PostApis = {
                     reject(error);
                 })
         })
-    }
+    },
+
+    getMyPost(id) {
+        return new Promise((resolve, reject) => {
+            axios.get(this.GET_POST_PROFILE + `/${id}/` + 'post')
+                .then((value) => {
+                    resolve(value.data.posts);
+                })
+                .catch((error) => {
+                    reject(error);
+                })
+        })
+    },
 
 }
 export default PostApis

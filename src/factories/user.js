@@ -1,8 +1,10 @@
 import axios from 'axios';
 const baseUrl = process.env.VUE_APP_BASE_URL
-const PostApis = {
+const UserApis = {
 
     GET_USER_BY_URL: `${baseUrl}/user`,
+
+    CHANGE_PASS: `${baseUrl}/change-pass`,
 
     getUserProfile(url) {
         return new Promise((resolve, reject) => {
@@ -15,6 +17,17 @@ const PostApis = {
                 })
         })
     },
+    changePass(data) {
+        return new Promise((resolve, reject) => {
+            axios.post(this.CHANGE_PASS, data)
+                .then(() => {
+                    resolve();
+                })
+                .catch((error) => {
+                    reject(error);
+                })
+        })
+    },
 
 }
-export default PostApis
+export default UserApis

@@ -93,6 +93,7 @@ export default {
     EventApis.getEventSearch(this.keyword)
       .then((value) => {
         this.events = value;
+        console.log(this.events);
       })
       .catch(() => {});
   },

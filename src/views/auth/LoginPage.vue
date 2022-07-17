@@ -33,7 +33,7 @@
               Bạn chưa có tài khoản?
               <router-link to="/register">Đăng ký</router-link>
             </div>
-            <div class="text-center">Quên mật khẩu?</div>
+            <!-- <div class="text-center">Quên mật khẩu?</div> -->
           </v-card>
         </v-container>
         <div class="text-center">
@@ -87,8 +87,7 @@ export default {
       ],
       passRules: [
         (v) => !!v || "Bạn phải nhập trường này*",
-        (v) =>
-          this.sizeItem(v) >= 6 || "Mật khẩu phải lớn hơn 6 kí tự",
+        (v) => this.sizeItem(v) >= 6 || "Mật khẩu phải lớn hơn 6 kí tự",
       ],
     };
   },
@@ -115,11 +114,11 @@ export default {
           this.$router.push("/");
         } catch (error) {
           if (error.response.status === 401) {
-            this.errorAlert("Email or password incorrect");
+            this.errorAlert("Sai thông tin");
           } else if (error.response.status === 400) {
             this.notVerifyDialog = true;
           } else {
-            this.errorAlert("An error has occurred! Try again");
+            this.errorAlert("Đã có lỗi xảy ra, thử lại");
           }
         }
       }
