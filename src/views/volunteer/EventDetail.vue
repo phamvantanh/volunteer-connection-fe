@@ -123,7 +123,6 @@
       <v-tab-item>
         <comment :id="event.id" :organzation_id="event.user_id"></comment>
       </v-tab-item>
-
       <v-tab-item>
         <review :id="event.id" :register_list="event.register_list"></review>
       </v-tab-item>

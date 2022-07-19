@@ -6,6 +6,8 @@ const UserApis = {
 
     CHANGE_PASS: `${baseUrl}/change-pass`,
 
+    NOTIFICATION: `${baseUrl}/notification`,
+
     getUserProfile(url) {
         return new Promise((resolve, reject) => {
             axios.get(this.GET_USER_BY_URL + `/${url}`)
@@ -25,6 +27,18 @@ const UserApis = {
                 })
                 .catch((error) => {
                     reject(error);
+                })
+        })
+    },
+
+    readNotice(id) {
+        return new Promise((resolve, reject) => {
+            axios.put(this.NOTIFICATION + `/${id}`)
+                .then(() => {
+                    resolve();
+                })
+                .catch(() => {
+                    reject();
                 })
         })
     },

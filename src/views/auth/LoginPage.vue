@@ -112,6 +112,7 @@ export default {
         try {
           await this.logIn(this.user);
           this.$router.push("/");
+          this.$router.go();
         } catch (error) {
           if (error.response.status === 401) {
             this.errorAlert("Sai thông tin");

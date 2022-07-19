@@ -17,7 +17,7 @@
           </template> -->
             <v-card>
               <v-card-title>
-                <span class="text-h5">"Chỉnh sửa thông tin"</span>
+                <span class="text-h5">Xác nhận tham gia</span>
               </v-card-title>
 
               <v-card-text>
@@ -93,17 +93,42 @@
         <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
         <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
       </template>
+      <template v-slot:[`item.certificates`]="{ item }">
+        <v-btn
+          v-if="item.certificate && item.certificate.url"
+          @click="openCertificate(item.certificate.url)"
+        >
+          Xem chứng chỉ
+        </v-btn>
+        <v-btn
+          v-if="!item.certificate"
+          color="green"
+          @click="setCertificate(item)"
+          >Cấp chứng chỉ
+        </v-btn>
+      </template>
       <template v-slot:no-data>
-        <v-btn color="primary" @click="fetchData()"> Reset </v-btn>
+        <v-btn color="primary" @click="fetchData()">
+          Reset
+        </v-btn>
       </template>
     </v-data-table>
+    <edit-certificate
+      :openDialog.sync="openDialog"
+      :certificate="editedCertificate"
+      @close-dialog="openDialog = false"
+      @fetch-data="fetchData()"
+    ></edit-certificate>
   </v-container>
 </template>
 <script>
 import EventApis from "@/factories/event";
+import EditCertificate from "@/components/EditCertificate.vue";
 export default {
+  components: { EditCertificate },
   data: () => ({
     dialog: false,
+    openDialog: false,
     dialogDelete: false,
     itemConfirmed: [
       { text: "Đã xác nhận", value: 1 },
@@ -133,9 +158,19 @@ export default {
         sortable: false,
         value: "is_confirmed",
       },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Thao tác", value: "actions", sortable: false },
+      { text: "Cấp chứng chỉ", value: "certificates", sortable: false },
     ],
     userList: [],
+    editedCertificate: {
+      id: null,
+      event_id: null,
+      user_id: null,
+      name: null,
+      organization_name: null,
+      issue_date: null,
+      url: null,
+    },
     editedItem: {
       user_id: "",
       event_id: null,
@@ -166,12 +201,12 @@ export default {
   },
 
   created() {
-    this.fetchData(this.$route.params.id);
+    this.fetchData();
   },
 
   methods: {
-    fetchData(eventId) {
-      EventApis.getUserListOfEvent(eventId)
+    fetchData() {
+      EventApis.getUserListOfEvent(this.$route.params.id)
         .then((value) => {
           this.userList = value;
         })
@@ -196,7 +231,7 @@ export default {
       EventApis.removeVolunteer(data)
         .then(() => {
           this.successAlert("Xóa thành công");
-          this.fetchData(this.$route.params.id);
+          this.fetchData();
         })
         .catch(() => {
           this.errorAlert("Đã xảy ra lỗi. Thử lại sau!");
@@ -224,12 +259,28 @@ export default {
       EventApis.updateVolunteer(data)
         .then(() => {
           this.successAlert("Cập nhật thành công");
-          this.fetchData(this.$route.params.id);
+          this.fetchData();
         })
         .catch(() => {
           this.errorAlert("Đã xảy ra lỗi. Thử lại sau!");
         });
       this.close();
+    },
+    openCertificate(url) {
+      window.open(url, "_blank").focus();
+    },
+    setCertificate(item) {
+      console.log(item);
+      this.openDialog = true;
+      this.editedCertificate = {
+        id: null,
+        event_id: item.event_id,
+        user_id: item.user_id,
+        name: null,
+        organization_name: null,
+        issue_date: null,
+        url: null,
+      };
     },
   },
 };

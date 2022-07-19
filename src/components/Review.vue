@@ -139,8 +139,12 @@ export default {
       },
       defaultItem: {
         id: null,
-        content: null,
-        rating: null,
+        event_id: null,
+        user_id: null,
+        name: null,
+        organization_name: null,
+        issue_date: null,
+        url: null,
       },
     };
   },
@@ -160,13 +164,16 @@ export default {
   },
   methods: {
     checkRegistered() {
-      const $result = this.register_list.find(
-        ({ user_id }) => user_id === this.User.id
-      );
-      if ($result && $result.is_confirmed === 1) {
-        return true;
-      } else {
-        return false;
+      if (this.User) {
+        const $result = this.register_list.find(
+          ({ user_id }) => user_id === this.User.id
+        );
+
+        if ($result && $result.is_confirmed === 1) {
+          return true;
+        } else {
+          return false;
+        }
       }
     },
     fetchReviews(id) {

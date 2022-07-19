@@ -22,6 +22,79 @@
         >{{ item.title }}</v-btn
       >
     </v-toolbar-items> -->
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+    <v-spacer></v-spacer>
+
+    <v-menu
+      bottom
+      min-width="300px"
+      max-width="300px"
+      max-height="400px"
+      rounded
+      offset-y
+      v-if="User"
+    >
+      <template v-slot:activator="{ on }">
+        <!-- <v-btn icon x-large v-on="on" color="white">
+          <v-icon>mdi-bell-outline</v-icon>
+        </v-btn> -->
+        <v-badge
+          :content="numberNotRead"
+          :value="numberNotRead"
+          color="red"
+          overlap
+        >
+          <v-icon v-on="on" large color="white">mdi-bell-outline</v-icon>
+        </v-badge>
+      </template>
+      <v-card class="mx-auto">
+        <v-list-item-content class="justify-center">
+          <div v-if="notiList.length === 0">Không có thông báo</div>
+          <div
+            style="cursor: pointer"
+            v-for="notification in notiList"
+            :key="notification.id"
+            @click="viewEvent(notification)"
+          >
+            <div class="mb-2">{{ notification.created_at }}</div>
+            <div class="mb-2 green--text">
+              {{ notification.is_seen ? "Đã đọc" : "Chưa đọc" }}
+            </div>
+
+            <div
+              class="mt-0 rounded-lg"
+              :style="!notification.is_seen ? 'font-weight: bold;' : ''"
+            >
+              {{ notification.content }}
+            </div>
+            <v-divider class="my-3"></v-divider>
+          </div>
+        </v-list-item-content>
+      </v-card>
+    </v-menu>
+    <v-spacer></v-spacer>
     <v-menu bottom min-width="200px" rounded offset-y v-if="User">
       <template v-slot:activator="{ on }">
         <v-btn icon x-large v-on="on">
@@ -81,6 +154,7 @@
 </template>
 
 <script>
+import UserApis from "@/factories/user";
 import { mapGetters, mapActions } from "vuex";
 import CookiesService from "../../services/cookies.service";
 const cookiesService = CookiesService.getService();
@@ -94,6 +168,25 @@ export default {
   },
   computed: {
     ...mapGetters({ User: "StateUser" }),
+    notiList() {
+      if (this.User && this.User.notification) {
+        const list = this.cloneDeep(this.User.notification).sort(function (
+          a,
+          b
+        ) {
+          return a.is_seen - b.is_seen;
+        });
+        return list;
+      } else return [];
+    },
+    numberNotRead() {
+      if (this.User && this.User.notification) {
+        const $arrayList = this.User.notification.filter(
+          (noti) => noti.is_seen === 0
+        );
+        return $arrayList.length;
+      } else return 0;
+    },
   },
   methods: {
     ...mapActions(["logOut"]),
@@ -104,7 +197,7 @@ export default {
           Authorization: "Bearer " + token,
         };
         await this.logOut(header);
-        this.$router.push({ path: "/" });
+        this.$router.push({ path: "/" }).catch(() => {});
       } catch (error) {
         console.log(error);
       }
@@ -130,6 +223,16 @@ export default {
     },
     newEvent() {
       this.$router.push({ path: "/add/event" });
+    },
+    viewEvent(notification) {
+      UserApis.readNotice(notification.id)
+        .then(() => {
+          this.$router.push({ path: "/event/" + notification.event.slug });
+          this.$router.go();
+        })
+        .catch(() => {
+          this.$router.push({ path: "/event/" + notification.event.slug });
+        });
     },
   },
 };

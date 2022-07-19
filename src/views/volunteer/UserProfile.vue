@@ -33,14 +33,14 @@
               <h2 class="green--text">{{ user.name }}</h2>
             </div>
           </v-row>
-          <v-row class="pa-5 mt-0 pt-0">
+          <!-- <v-row class="pa-5 mt-0 pt-0">
             <div class="pr-2" v-if="user.role === 'volunteer'">
               <h3>Đang theo dõi 10 tổ chức</h3>
             </div>
             <div class="pr-2" v-if="user.role === 'organization'">
               <h3>10 tình nguyện viên theo dõi</h3>
             </div>
-          </v-row>
+          </v-row> -->
           <v-row class="pa-5 mt-0 pt-0">
             <div class="pr-2">
               <h3>Số điện thoại: {{ user.phone }}</h3>
@@ -81,7 +81,7 @@
                 <v-col cols="12" sm="6" md="12">
                   <v-file-input
                     accept="image/png, image/jpeg, image/bmp"
-                    placeholder="Pick an avatar"
+                    placeholder="Chọn ảnh địa diện"
                     prepend-icon="mdi-camera"
                     label="Avatar"
                     v-model="editedItem.avatar_url"
@@ -288,6 +288,7 @@ export default {
       new_password: null,
       new_confirm_password: null,
     },
+  
   }),
   created() {
     this.getUserProfileByUrl(this.$route.params.url);

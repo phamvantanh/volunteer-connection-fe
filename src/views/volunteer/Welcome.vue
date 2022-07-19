@@ -6,7 +6,10 @@
         <h1 class="mt-16 ml-16 white--text text-center" style="font-size: 4em">
           HÃY LÀM NHỮNG VIỆC BÌNH THƯỜNG
         </h1>
-        <h1 class="ml-5 mb-16 white--text text-center mt-n16" style="font-size: 4em">
+        <h1
+          class="ml-5 mb-16 white--text text-center mt-n16"
+          style="font-size: 4em"
+        >
           BẰNG LÒNG SAY MÊ PHI THƯỜNG
         </h1>
       </v-row>
@@ -399,5 +402,4 @@ export default {
 h1 {
   text-shadow: 1px 3px black, 0 0 50px green, 0 0 100px darkblue;
 }
-
 </style>
